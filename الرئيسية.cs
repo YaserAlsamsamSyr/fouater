@@ -68,6 +68,7 @@ namespace fouater
                 button5.Visible = false;
             }
             this.Close();
+            window.Refresh();
             window.getEmployees();
         }
 

@@ -36,6 +36,7 @@ namespace fouater
                         if (!reader1.Read())
                         {
                             MessageBox.Show("المعلومات المدخلة خاطئة");
+                            return;
                         }
                         else
                         {
@@ -72,10 +73,22 @@ namespace fouater
                                 //this.Hide();
                                 var open = new الرئيسية(role, this);
                                 open.Show();
+
                             }
                         }
                         conn.Close();
                     }
+                    cmdString = "update employees set lastLogin=@val2 where userName=@val1";
+                    using (SqlCommand comm = new SqlCommand(cmdString, conn))
+                    {
+                            comm.Parameters.AddWithValue("@val1", Employee.userNamee);
+                            comm.Parameters.AddWithValue("@val2", DateTime.Now.ToString("MM / dd / yyyy HH: mm"));
+                            conn.Open();
+                            comm.ExecuteReader();
+                            conn.Close();
+                    }
+                    label4.Text = "";
+                    label5.Text = "";
                 }
             }
         }
@@ -139,6 +152,28 @@ namespace fouater
         private void button1_MouseLeave(object sender, EventArgs e)
         {
             button1.ForeColor = Color.Firebrick;
+        }
+
+        private void listBox1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            string cmdString = "select lastLogin from employees where userName=@val1";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                using (SqlCommand comm = new SqlCommand(cmdString, conn))
+                {
+                    comm.Parameters.AddWithValue("@val1", listBox1.Text);
+                    conn.Open();
+                    SqlDataReader reader1 = comm.ExecuteReader();
+                    if (reader1.Read())
+                    {
+                        label4.Visible = true;
+                        label5.Visible=true;
+                        label5.Text = reader1.GetValue(0).ToString();
+                        label4.Text = "أخر تسجيل دخول";
+                    }
+                    conn.Close();
+                }
+            }
         }
     }
 }
